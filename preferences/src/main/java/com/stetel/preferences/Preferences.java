@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -119,30 +120,45 @@ public class Preferences {
         set(Collections.singletonMap(name, value));
     }
 
-    public void set(Map<String, Object> nameValuePairs) {
-        SharedPreferences.Editor editor = preferences.edit();
-        for (Map.Entry<String, Object> nameValuePair : nameValuePairs.entrySet()) {
-            String name = nameValuePair.getKey();
-            Object value = nameValuePair.getValue();
-            if (value == null) {
-                editor.remove(name);
-            } else if (value instanceof Boolean) {
-                editor.putBoolean(name, (boolean) value);
-            } else if (value instanceof Integer) {
-                editor.putInt(name, (int) value);
-            } else if (value instanceof Float) {
-                editor.putFloat(name, (float) value);
-            } else if (value instanceof Long) {
-                editor.putLong(name, (long) value);
-            } else if (value instanceof String) {
-                editor.putString(name, (String) value);
-            } else if (value instanceof Enum) {
-                editor.putString(name, ((Enum) value).name());
-            } else {
-                editor.putString(name, gson.toJson(value));
+    public void set(Object... namesValues) {
+        if (namesValues != null && namesValues.length > 0) {
+            if (namesValues.length % 2 != 0) {
+                throw new IllegalArgumentException("namesValues must be a key/value list");
             }
+            Map<String, Object> map = new HashMap<>();
+            for (int i = 0; i < namesValues.length; i += 2) {
+                map.put((String) namesValues[i], namesValues[i+1]);
+            }
+            set(map);
         }
-        editor.apply();
+    }
+
+    public void set(Map<String, Object> namesValues) {
+        if (namesValues != null && namesValues.size() > 0) {
+            SharedPreferences.Editor editor = preferences.edit();
+            for (Map.Entry<String, Object> nameValuePair : namesValues.entrySet()) {
+                String name = nameValuePair.getKey();
+                Object value = nameValuePair.getValue();
+                if (value == null) {
+                    editor.remove(name);
+                } else if (value instanceof Boolean) {
+                    editor.putBoolean(name, (boolean) value);
+                } else if (value instanceof Integer) {
+                    editor.putInt(name, (int) value);
+                } else if (value instanceof Float) {
+                    editor.putFloat(name, (float) value);
+                } else if (value instanceof Long) {
+                    editor.putLong(name, (long) value);
+                } else if (value instanceof String) {
+                    editor.putString(name, (String) value);
+                } else if (value instanceof Enum) {
+                    editor.putString(name, ((Enum) value).name());
+                } else {
+                    editor.putString(name, gson.toJson(value));
+                }
+            }
+            editor.apply();
+        }
     }
 
     public int increment(String name, int defValue) {

@@ -9,6 +9,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        MyApplication.getPreferences(this).set("hello", "Hello world!");
+        MyApplication.getPreferences(this).set("hello", "Hello world!", "bye", "Bye world!");
     }
 }
