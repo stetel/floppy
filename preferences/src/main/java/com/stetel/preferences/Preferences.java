@@ -1,24 +1,26 @@
 package com.stetel.preferences;
 
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class Preferences {
-    private Gson gson = new Gson();
     private SharedPreferences preferences;
-    private Type stringListType = new TypeToken<List<String>>(){}.getType();
-    private Type integerListType = new TypeToken<List<Integer>>(){}.getType();
-    private Type stringMapType = new TypeToken<Map<String, String>>(){}.getType();
-    private Type integerMapType = new TypeToken<Map<String, Integer>>(){}.getType();
+    private static final Gson gson = new Gson();
+    private static final Type STRING_SET_TYPE = new TypeToken<Set<String>>(){}.getType();
+    private static final Type INTEGER_SET_TYPE = new TypeToken<Set<Integer>>(){}.getType();
+    private static final Type STRING_LIST_TYPE = new TypeToken<List<String>>(){}.getType();
+    private static final Type INTEGER_LIST_TYPE = new TypeToken<List<Integer>>(){}.getType();
+    private static final Type STRING_MAP_TYPE = new TypeToken<Map<String, String>>(){}.getType();
+    private static final Type INTEGER_MAP_TYPE = new TypeToken<Map<String, Integer>>(){}.getType();
 
     public Preferences(SharedPreferences preferencesInstance) {
         this.preferences = preferencesInstance;
@@ -48,49 +50,69 @@ public class Preferences {
         return preferences.getString(name, null);
     }
 
-    public Set<String> getStringSet(String name) {
-        Set<String> set = preferences.getStringSet(name, null);
-        if (set == null) {
-            return null;
-        } else {
-            return new HashSet<>(set);
-        }
+    public String getString(String name, String defValue) {
+        return preferences.getString(name, defValue);
     }
 
-    public <T extends Enum<T>> T getEnum(Class<T> type, String name, T defValue) {
-        String enumString = preferences.getString(name, defValue.name());
-        return Enum.valueOf(type, enumString);
+    public Set<String> getStringSet(String name) {
+        return getSet(STRING_SET_TYPE, name);
+    }
+
+    public Set<Integer> getIntegerSet(String name) {
+        return getSet(INTEGER_SET_TYPE, name);
+    }
+
+    public <E> Set<E> getSet(Type type, String name) {
+        String setString = preferences.getString(name, null);
+        if (TextUtils.isEmpty(setString)) {
+            return null;
+        }
+        return gson.fromJson(setString, type);
     }
 
     public List<String> getStringList(String name) {
-        return getList(stringListType, name);
+        return getList(STRING_LIST_TYPE, name);
     }
 
-    public List<String> getIntegerList(String name) {
-        return getList(integerListType, name);
+    public List<Integer> getIntegerList(String name) {
+        return getList(INTEGER_LIST_TYPE, name);
     }
 
     public <E> List<E> getList(Type type, String name) {
-        String mapString = preferences.getString(name, null);
-        return gson.fromJson(mapString, type);
+        String listString = preferences.getString(name, null);
+        if (TextUtils.isEmpty(listString)) {
+            return null;
+        }
+        return gson.fromJson(listString, type);
     }
 
     public Map<String, String> getStringMap(String name) {
-        return getMap(stringMapType, name);
+        return getMap(STRING_MAP_TYPE, name);
     }
 
     public Map<String, Integer> getIntegerMap(String name) {
-        return getMap(integerMapType, name);
+        return getMap(INTEGER_MAP_TYPE, name);
     }
 
     public <K, V> Map<K, V> getMap(Type type, String name) {
         String mapString = preferences.getString(name, null);
+        if (TextUtils.isEmpty(mapString)) {
+            return null;
+        }
         return gson.fromJson(mapString, type);
     }
 
+    public <T extends Enum<T>> T getEnum(Class<T> enumType, String name, T defValue) {
+        String enumString = preferences.getString(name, defValue.name());
+        return Enum.valueOf(enumType, enumString);
+    }
+
     public <T> T get(Class<T> cls, String name) {
-        String mapString = preferences.getString(name, null);
-        return gson.fromJson(mapString, cls);
+        String objString = preferences.getString(name, null);
+        if (TextUtils.isEmpty(objString)) {
+            return null;
+        }
+        return gson.fromJson(objString, cls);
     }
 
     public void set(String name, Object value) {
@@ -114,8 +136,6 @@ public class Preferences {
                 editor.putLong(name, (long) value);
             } else if (value instanceof String) {
                 editor.putString(name, (String) value);
-            } else if (value instanceof Set) {
-                editor.putStringSet(name, (Set) value);
             } else if (value instanceof Enum) {
                 editor.putString(name, ((Enum) value).name());
             } else {
