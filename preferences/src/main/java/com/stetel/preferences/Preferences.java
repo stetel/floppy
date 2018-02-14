@@ -13,30 +13,23 @@ import java.util.Map;
 import java.util.Set;
 
 public class Preferences {
+    private Gson gson = new Gson();
     private SharedPreferences preferences;
-    private Type stringListType;
-    private Type integerListType;
-    private Type stringMapType;
-    private Type integerMapType;
+    private Type stringListType = new TypeToken<List<String>>(){}.getType();
+    private Type integerListType = new TypeToken<List<Integer>>(){}.getType();
+    private Type stringMapType = new TypeToken<Map<String, String>>(){}.getType();
+    private Type integerMapType = new TypeToken<Map<String, Integer>>(){}.getType();
 
     public Preferences(SharedPreferences preferencesInstance) {
         this.preferences = preferencesInstance;
-        this.stringListType = new TypeToken<List<String>>(){}.getType();
-        this.integerListType = new TypeToken<List<Integer>>(){}.getType();
-        this.stringMapType = new TypeToken<Map<String, String>>(){}.getType();
-        this.integerMapType = new TypeToken<Map<String, Integer>>(){}.getType();
-    }
-
-    public void clearAllPreferences() {
-        preferences.edit().clear().apply();
     }
 
     public boolean getBoolean(String name) {
         return preferences.getBoolean(name, false);
     }
 
-    public boolean getBoolean(String name, boolean defaultValue) {
-        return preferences.getBoolean(name, defaultValue);
+    public boolean getBoolean(String name, boolean defValue) {
+        return preferences.getBoolean(name, defValue);
     }
 
     public int getInt(String name, int defValue) {
@@ -79,7 +72,7 @@ public class Preferences {
 
     public <E> List<E> getList(Type type, String name) {
         String mapString = preferences.getString(name, null);
-        return new Gson().fromJson(mapString, type);
+        return gson.fromJson(mapString, type);
     }
 
     public Map<String, String> getStringMap(String name) {
@@ -90,14 +83,14 @@ public class Preferences {
         return getMap(integerMapType, name);
     }
 
-    public <K, V> Map<K, V> getMap(Type type, String name) {new StringBuilder().append(new Object());
+    public <K, V> Map<K, V> getMap(Type type, String name) {
         String mapString = preferences.getString(name, null);
-        return new Gson().fromJson(mapString, type);
+        return gson.fromJson(mapString, type);
     }
 
     public <T> T get(Class<T> cls, String name) {
         String mapString = preferences.getString(name, null);
-        return new Gson().fromJson(mapString, cls);
+        return gson.fromJson(mapString, cls);
     }
 
     public void set(String name, Object value) {
@@ -126,7 +119,7 @@ public class Preferences {
             } else if (value instanceof Enum) {
                 editor.putString(name, ((Enum) value).name());
             } else {
-                editor.putString(name, new Gson().toJson(value));
+                editor.putString(name, gson.toJson(value));
             }
         }
         editor.apply();
@@ -154,5 +147,9 @@ public class Preferences {
         for (String name : names) {
             set(name, null);
         }
+    }
+
+    public void clear() {
+        preferences.edit().clear().apply();
     }
 }
