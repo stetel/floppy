@@ -35,12 +35,24 @@ public class Preferences {
         return preferences.getBoolean(name, defValue);
     }
 
+    public int getInt(String name) {
+        return preferences.getInt(name, 0);
+    }
+
     public int getInt(String name, int defValue) {
         return preferences.getInt(name, defValue);
     }
 
+    public float getFloat(String name) {
+        return preferences.getFloat(name, 0);
+    }
+
     public float getFloat(String name, float defValue) {
         return preferences.getFloat(name, defValue);
+    }
+
+    public long getLong(String name) {
+        return preferences.getLong(name, 0);
     }
 
     public long getLong(String name, long defValue) {
@@ -123,7 +135,7 @@ public class Preferences {
     public void set(Object... namesValues) {
         if (namesValues != null && namesValues.length > 0) {
             if (namesValues.length % 2 != 0) {
-                throw new IllegalArgumentException("namesValues must be a key/value list");
+                throw new IllegalArgumentException("namesValues must be a name/value argument list");
             }
             Map<String, Object> map = new HashMap<>();
             for (int i = 0; i < namesValues.length; i += 2) {
