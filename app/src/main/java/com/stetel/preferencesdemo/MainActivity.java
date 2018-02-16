@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         parentsMap.put("Mother", new Person("Annie", 35));
         preferences.set("parentsMap", parentsMap);
 
+        Wrapper<Person> wrapper = new Wrapper<>(new Person("grandfather", 65));
+        preferences.set("wrapper", wrapper);
         // get and log
         Log.i(TAG, "Greetings: " + preferences.getString("hello") + ", " +
                 preferences.getString("bye") + " x" + preferences.getInt("times", 0));
@@ -64,17 +66,26 @@ public class MainActivity extends AppCompatActivity {
                 retrievedClass.getAge());
 
         // TypeToken is inside the package 'com.google.code.gson:gson'
-        Type type = new TypeToken<Map<String, Person>>() {}.getType();
-        Map<String, Person> retrievedMap = preferences.getMap(type, "parentsMap");
+        Type mapType = new TypeToken<Map<String, Person>>() {}.getType();
+        Map<String, Person> retrievedMap = preferences.getMap(mapType, "parentsMap");
         for (Map.Entry<String, Person> entry: retrievedMap.entrySet()){
             Log.i(TAG, entry.getKey() + " name: " +
                     entry.getValue().getName() + ", age: " + entry.getValue().getAge());
         }
+
+        Type type = new TypeToken<Wrapper<Person>>() {}.getType();
+        Wrapper<Person> retrievedWrapper = preferences.get(type, "wrapper");
+        Log.i(TAG, "Wrapper grandfather name: " + retrievedWrapper.toString());
     }
 
     static class Person {
         private String name;
         private int age;
+
+        Person() {
+            this.name = "Nobody";
+            this.age = -1;
+        }
 
         Person(String name, int age) {
             this.name = name;
@@ -87,6 +98,31 @@ public class MainActivity extends AppCompatActivity {
 
         int getAge() {
             return age;
+        }
+
+        @Override
+        public String toString() {
+            return "Person{" +
+                    "name='" + name + '\'' +
+                    ", age=" + age +
+                    '}';
+        }
+    }
+
+    static class Wrapper<K> {
+        K object;
+
+        Wrapper() {
+
+        }
+
+        Wrapper(K object) {
+            this.object = object;
+        }
+
+        @Override
+        public String toString() {
+            return object == null ? "No object" : object.toString();
         }
     }
 }

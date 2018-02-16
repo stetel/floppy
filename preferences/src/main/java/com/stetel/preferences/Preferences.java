@@ -343,6 +343,33 @@ public class Preferences {
     }
 
     /**
+     * Get a custom object with a generic type.<br/>
+     * <br/>
+     * You must include the Google GSON library to use this method (com.google.code.gson:gson)<br/>
+     * Then create a new TypeToken, e.g.
+     * <pre><code>{@literal Type type = new TypeToken<CustomClass<String>>(){}.getType();}</pre></code>
+     *
+     * @param name name of the var
+     * @return Saved custom object or null if not present
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T get(Type type, String name) {
+        String objString = sharedPreferences.getString(name, null);
+        if (objString == null) {
+            return null;
+        }
+        if (objString.isEmpty()) {
+            try {
+                TypeToken<T> typeToken = (TypeToken<T>) TypeToken.get(type);
+                return (T) typeToken.getRawType().newInstance();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return gson.fromJson(objString, type);
+    }
+
+    /**
      * Set a var containing any value
      *
      * @param name name of the var
