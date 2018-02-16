@@ -7,8 +7,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -212,8 +214,11 @@ public class Preferences {
      */
     public <E> Set<E> getSet(Type type, String name) {
         String setString = sharedPreferences.getString(name, null);
-        if (TextUtils.isEmpty(setString)) {
+        if (setString == null) {
             return null;
+        }
+        if (setString.isEmpty()) {
+            return new HashSet<>();
         }
         return gson.fromJson(setString, type);
     }
@@ -251,8 +256,11 @@ public class Preferences {
      */
     public <E> List<E> getList(Type type, String name) {
         String listString = sharedPreferences.getString(name, null);
-        if (TextUtils.isEmpty(listString)) {
+        if (listString == null) {
             return null;
+        }
+        if (listString.isEmpty()) {
+            return new ArrayList<>();
         }
         return gson.fromJson(listString, type);
     }
@@ -290,8 +298,11 @@ public class Preferences {
      */
     public <K, V> Map<K, V> getMap(Type type, String name) {
         String mapString = sharedPreferences.getString(name, null);
-        if (TextUtils.isEmpty(mapString)) {
+        if (mapString == null) {
             return null;
+        }
+        if (mapString.isEmpty()) {
+            return new HashMap<>();
         }
         return gson.fromJson(mapString, type);
     }
@@ -318,8 +329,15 @@ public class Preferences {
      */
     public <T> T get(Class<T> cls, String name) {
         String objString = sharedPreferences.getString(name, null);
-        if (TextUtils.isEmpty(objString)) {
+        if (objString == null) {
             return null;
+        }
+        if (objString.isEmpty()) {
+            try {
+                return cls.newInstance();
+            } catch (Exception e) {
+                return null;
+            }
         }
         return gson.fromJson(objString, cls);
     }
