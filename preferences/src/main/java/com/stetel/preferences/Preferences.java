@@ -2,10 +2,13 @@ package com.stetel.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,8 +48,7 @@ import java.util.Set;
  *  <li>Generate a new instance every time you need it</li>
  * </ul>
  */
-public class Preferences {
-    private SharedPreferences sharedPreferences;
+public class Preferences implements Serializable {
     private static final Gson gson = new Gson();
     private static final Type STRING_SET_TYPE = new TypeToken<Set<String>>(){}.getType();
     private static final Type INTEGER_SET_TYPE = new TypeToken<Set<Integer>>(){}.getType();
@@ -54,14 +56,27 @@ public class Preferences {
     private static final Type INTEGER_LIST_TYPE = new TypeToken<List<Integer>>(){}.getType();
     private static final Type STRING_MAP_TYPE = new TypeToken<Map<String, String>>(){}.getType();
     private static final Type INTEGER_MAP_TYPE = new TypeToken<Map<String, Integer>>(){}.getType();
+    private static volatile Preferences instance;
+    private SharedPreferences sharedPreferences;
 
-    /**
-     * Creates an instance passing the preferred SharedPreferences.
-     *
-     * @param sharedPreferences Android Shared Preferences
-     */
-    public Preferences(SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    public static Preferences getInstance(Context context) {
+        if (instance == null) {
+            synchronized (Preferences.class) {
+                if (instance == null) {
+                    instance = new Preferences(context);
+                }
+            }
+        }
+        return instance;
+    }
+
+    protected Preferences readResolve() {
+        throw new RuntimeException("Preferences class is not serializable");
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException("Preferences class is a singleton");
     }
 
     /**
@@ -69,7 +84,10 @@ public class Preferences {
      *
      * @param context app context
      */
-    public Preferences(Context context) {
+    private Preferences(Context context) {
+        if (instance != null) {
+            throw new RuntimeException("Use getInstance() to get an instance of the Preferences class");
+        }
         Context appContext = context.getApplicationContext();
         this.sharedPreferences = appContext.getSharedPreferences(appContext.getPackageName(), 0);
     }
