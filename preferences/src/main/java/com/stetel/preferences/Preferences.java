@@ -1,7 +1,7 @@
 package com.stetel.preferences;
 
+import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 /**
  * Preferences improves the standard SharedPreferences: faster to use, lots of helpful methods,
  * save every kind of object.<br/>
@@ -24,16 +22,7 @@ import javax.inject.Inject;
  * Usage:
  * <ul>
  *  <li>
- *      Use Dagger to inject the var as a singleton.<br/>
- *      Create an application module and provide the Shared Preference instance.<br/>
- *      You don't need to provide Preferences, because it is Dagger ready.
- *      <pre><code>
- * {@literal @}Singleton
- * {@literal @}Provides
- *  SharedPreferences provideSharedPreferences() {
- *    return application.getSharedPreferences(BuildConfig.APPLICATION_ID, 0);
- *  }
- *      </code></pre>
+ *      Create a singleton class wrapping the Preferences instance
  *  </li>
  *  <li>
  *      Extend the Application class and instantiate Preferences, then add a static getter.
@@ -44,7 +33,7 @@ import javax.inject.Inject;
  *  {@literal @}Override
  *   public void onCreate() {
  *     super.onCreate();
- *     this.preferences = new Preferences(getSharedPreferences(BuildConfig.APPLICATION_ID, 0));
+ *     this.preferences = new Preferences(this, BuildConfig.APPLICATION_ID);
  *   }
  *
  *   public static Preferences getPreferences(Context context) {
@@ -67,13 +56,22 @@ public class Preferences {
     private static final Type INTEGER_MAP_TYPE = new TypeToken<Map<String, Integer>>(){}.getType();
 
     /**
-     * Creates an instance passing the SharedPreferences.
+     * Creates an instance passing the preferred SharedPreferences.
      *
-     * @param sharedPreferences Android SharedPreferences
+     * @param sharedPreferences Android Shared Preferences
      */
-    @Inject
     public Preferences(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
+    }
+
+    /**
+     * Create an instance using application package name as the Shared Preferences file name
+     *
+     * @param context app context
+     */
+    public Preferences(Context context) {
+        Context appContext = context.getApplicationContext();
+        this.sharedPreferences = appContext.getSharedPreferences(appContext.getPackageName(), 0);
     }
 
     /**
