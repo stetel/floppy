@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Preferences preferences = MyApplication.getPreferences(this);
+        Preferences preferences = Preferences.getInstance(this);
         // set
         preferences.set("hello", "Hello world!", "bye", "Bye world!", "times", 2);
 
@@ -61,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "RGB list item: " + myString);
         }
 
-        Person retrievedClass = preferences.get(Person.class, "myClass");
-        Log.i(TAG, "Child name: " + retrievedClass.getName() + ", age: " +
-                retrievedClass.getAge());
+//        Person retrievedClass = preferences.get(Person.class, "myClass");
+//        Log.i(TAG, "Child name: " + retrievedClass.getName() + ", age: " +
+//                retrievedClass.getAge());
 
         // TypeToken is inside the package 'com.google.code.gson:gson'
         Type mapType = new TypeToken<Map<String, Person>>() {}.getType();
