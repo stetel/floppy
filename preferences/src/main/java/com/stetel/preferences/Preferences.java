@@ -103,10 +103,12 @@ public class Preferences implements Serializable {
 
     /**
      * Allows to know if the app was updated since the last run.<br/>
+     * <br/>
      * For example if you changed a var name in the new version of the app, you can use the
      * returned value to know what was the previous app version and copy the old var.<br/>
      * This is inspired to the SQLiteOpenHelper onUpgrade() method without the burden to specify
      * a separated Shared Preferences version.<br/>
+     * <br/>
      * <b>Important:</b> you will get the versions information only the first time you invoke this method.
      *  From the second time and on, the information of the previous version is lost. It is
      *  recommended to call this method as early as possible (e.g. extended Application class) and
