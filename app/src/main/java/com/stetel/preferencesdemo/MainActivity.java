@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
-import com.stetel.preferences.Preferences;
+import com.stetel.preferences.Floppy;
 import com.stetel.preferences.Versions;
 
 import java.lang.reflect.Type;
@@ -26,67 +26,67 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Preferences preferences = Preferences.getInstance(this);
-        Versions versions = preferences.checkUpdate();
+        Floppy floppy = Floppy.insert(this);
+        Versions versions = floppy.checkUpdate();
         if (versions.isUpdated()) {
-            preferences.set("updatedInfo", "updated from " + versions.getPrevious() + " to " +
+            floppy.write("updatedInfo", "updated from " + versions.getPrevious() + " to " +
                     versions.getCurrent() + " on " +
                     new SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.US).format(new Date()));
         }
         // set
-        preferences.set("hello", "Hello world!", "bye", "Bye world!", "times", 2);
+        floppy.write("hello", "Hello world!", "bye", "Bye world!", "times", 2);
 
         Set<String> numberSet = new HashSet<>();
         numberSet.add("one");
         numberSet.add("two");
         numberSet.add("three");
-        preferences.set("numbers", numberSet);
+        floppy.write("numbers", numberSet);
 
         List<String> rgbList = new ArrayList<>();
         rgbList.add("red");
         rgbList.add("green");
         rgbList.add("blue");
-        preferences.set("rgbList", rgbList);
+        floppy.write("rgbList", rgbList);
 
-        preferences.set("child", new Person("Dave", 7));
+        floppy.write("child", new Person("Dave", 7));
 
         // need package 'com.google.code.gson:gson' to retrieve the var later
         Map<String, Person> parentsMap = new HashMap<>();
         parentsMap.put("Father", new Person("Jack", 40));
         parentsMap.put("Mother", new Person("Annie", 35));
-        preferences.set("parentsMap", parentsMap);
+        floppy.write("parentsMap", parentsMap);
 
         Wrapper<Person> wrapper = new Wrapper<>(new Person("grandfather", 65));
-        preferences.set("wrapper", wrapper);
+        floppy.write("wrapper", wrapper);
         // get and log
-        Log.i(TAG, "Update info: " + preferences.getString("updatedInfo"));
+        Log.i(TAG, "Update info: " + floppy.readString("updatedInfo"));
 
-        Log.i(TAG, "Greetings: " + preferences.getString("hello") + ", " +
-                preferences.getString("bye") + " x" + preferences.getInt("times", 0));
+        Log.i(TAG, "Greetings: " + floppy.readString("hello") + ", " +
+                floppy.readString("bye") + " x" + floppy.readInt("times", 0));
 
-        Set<String> retrievedSet = preferences.getStringSet("numbers");
+        Set<String> retrievedSet = floppy.readStringSet("numbers");
         for (String myString : retrievedSet) {
             Log.i(TAG, "Numbers item: " + myString);
         }
-        List<String> retrievedList = preferences.getStringList("rgbList");
+        List<String> retrievedList = floppy.readStringList("rgbList");
         for (String myString : retrievedList) {
             Log.i(TAG, "RGB list item: " + myString);
         }
 
-        Person retrievedClass = preferences.get(Person.class, "child");
+        Person retrievedClass = floppy.read(Person.class, "child");
         Log.i(TAG, "Child name: " + retrievedClass.getName() + ", age: " +
                 retrievedClass.getAge());
 
         // TypeToken is inside the package 'com.google.code.gson:gson'
         Type mapType = new TypeToken<Map<String, Person>>() {}.getType();
-        Map<String, Person> retrievedMap = preferences.getMap(mapType, "parentsMap");
+        Map<String, Person> retrievedMap = floppy.readMap(mapType, "parentsMap");
         for (Map.Entry<String, Person> entry: retrievedMap.entrySet()){
             Log.i(TAG, entry.getKey() + " name: " +
                     entry.getValue().getName() + ", age: " + entry.getValue().getAge());
         }
 
         Type type = new TypeToken<Wrapper<Person>>() {}.getType();
-        Wrapper<Person> retrievedWrapper = preferences.get(type, "wrapper");
+        Wrapper<Person> retrievedWrapper = floppy.read(type, "wrapper");
         Log.i(TAG, "Wrapper grandfather name: " + retrievedWrapper.toString());
     }
 

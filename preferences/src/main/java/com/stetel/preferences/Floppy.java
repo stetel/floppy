@@ -18,12 +18,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Preferences improves the standard SharedPreferences: faster to use, lots of helpful methods,
+ * Floppy improves the standard SharedPreferences: faster to use, lots of helpful methods,
  * save every kind of object, keep tracks of app versions changes.<br/>
  * <br/>
- * To start using it retrieve an instance via the getInstance() method.
+ * To start using it retrieve an instance via the insert() method.
  */
-public class Preferences implements Serializable {
+public class Floppy implements Serializable {
     private static final String __APP_VERSION_CODE = "__APP_VERSION_CODE";
     private static final Gson gson = new Gson();
     private static final Type STRING_SET_TYPE = new TypeToken<Set<String>>(){}.getType();
@@ -32,21 +32,21 @@ public class Preferences implements Serializable {
     private static final Type INTEGER_LIST_TYPE = new TypeToken<List<Integer>>(){}.getType();
     private static final Type STRING_MAP_TYPE = new TypeToken<Map<String, String>>(){}.getType();
     private static final Type INTEGER_MAP_TYPE = new TypeToken<Map<String, Integer>>(){}.getType();
-    private static volatile Preferences instance;
+    private static volatile Floppy instance;
     private SharedPreferences sharedPreferences;
     private Versions versions;
 
     /**
-     * Retrieve a Preferences instance.
+     * Retrieve a Floppy instance.
      *
      * @param context Context
      * @return An instance of this class
      */
-    public static Preferences getInstance(Context context) {
+    public static Floppy insert(Context context) {
         if (instance == null) {
-            synchronized (Preferences.class) {
+            synchronized (Floppy.class) {
                 if (instance == null) {
-                    instance = new Preferences(context.getApplicationContext());
+                    instance = new Floppy(context.getApplicationContext());
                 }
             }
         }
@@ -58,8 +58,8 @@ public class Preferences implements Serializable {
      *
      * @return
      */
-    protected Preferences readResolve() {
-        throw new RuntimeException("Preferences class is not serializable");
+    protected Floppy readResolve() {
+        throw new RuntimeException("Floppy class is not serializable");
     }
 
     /**
@@ -70,26 +70,26 @@ public class Preferences implements Serializable {
      */
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        throw new CloneNotSupportedException("Preferences class is a singleton");
+        throw new CloneNotSupportedException("Floppy class is a singleton");
     }
 
     /**
-     * Private constructor which gets the Shared Preferences with the file name equals to the
+     * Private constructor which gets the SharedPreferences with the file name equals to the
      * package name and save the app version info.
      *
      * @param appContext App context
      */
-    private Preferences(Context appContext) {
+    private Floppy(Context appContext) {
         if (instance != null) {
-            throw new RuntimeException("Use getInstance() to get an instance of the Preferences class");
+            throw new RuntimeException("Use insert() to get an instance of the Floppy class");
         }
         this.sharedPreferences = appContext.getSharedPreferences(appContext.getPackageName(), 0);
-        int previousVersion = getInt(__APP_VERSION_CODE, -1);
+        int previousVersion = readInt(__APP_VERSION_CODE, -1);
         try {
             int currentVersion = appContext.getPackageManager()
                     .getPackageInfo(appContext.getPackageName(), 0).versionCode;
             if (previousVersion != currentVersion) {
-                set(__APP_VERSION_CODE, currentVersion);
+                write(__APP_VERSION_CODE, currentVersion);
             }
             if (previousVersion < 0) {
                 this.versions = new Versions(currentVersion, currentVersion);
@@ -107,7 +107,7 @@ public class Preferences implements Serializable {
      * For example if you changed a var name in the new version of the app, you can use the
      * returned value to know what was the previous app version and copy the old var.<br/>
      * This is inspired to the SQLiteOpenHelper onUpgrade() method without the burden to specify
-     * a separated Shared Preferences version.<br/>
+     * a separated Shared Floppy version.<br/>
      * <br/>
      * <b>Important:</b> you will get the versions information only the first time you invoke this method.
      *  From the second time and on, the information of the previous version is lost. It is
@@ -128,7 +128,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved boolean value or false if not present
      */
-    public boolean getBoolean(String name) {
+    public boolean readBoolean(String name) {
         return sharedPreferences.getBoolean(name, false);
     }
 
@@ -139,7 +139,7 @@ public class Preferences implements Serializable {
      * @param defValue default value if the var is not present
      * @return Saved boolean value or defValue if not present
      */
-    public boolean getBoolean(String name, boolean defValue) {
+    public boolean readBoolean(String name, boolean defValue) {
         return sharedPreferences.getBoolean(name, defValue);
     }
 
@@ -149,7 +149,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved integer value or 0 if not present
      */
-    public int getInt(String name) {
+    public int readInt(String name) {
         return sharedPreferences.getInt(name, 0);
     }
 
@@ -160,7 +160,7 @@ public class Preferences implements Serializable {
      * @param defValue default value if the var is not present
      * @return Saved integer value or defValue if not present
      */
-    public int getInt(String name, int defValue) {
+    public int readInt(String name, int defValue) {
         return sharedPreferences.getInt(name, defValue);
     }
 
@@ -170,7 +170,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved boolean value or 0 if not present
      */
-    public float getFloat(String name) {
+    public float readFloat(String name) {
         return sharedPreferences.getFloat(name, 0);
     }
 
@@ -181,7 +181,7 @@ public class Preferences implements Serializable {
      * @param defValue default value if the var is not present
      * @return Saved float value or defValue if not present
      */
-    public float getFloat(String name, float defValue) {
+    public float readFloat(String name, float defValue) {
         return sharedPreferences.getFloat(name, defValue);
     }
 
@@ -191,7 +191,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved long value or 0 if not present
      */
-    public long getLong(String name) {
+    public long readLong(String name) {
         return sharedPreferences.getLong(name, 0);
     }
 
@@ -202,7 +202,7 @@ public class Preferences implements Serializable {
      * @param defValue default value if the var is not present
      * @return Saved long value or defValue if not present
      */
-    public long getLong(String name, long defValue) {
+    public long readLong(String name, long defValue) {
         return sharedPreferences.getLong(name, defValue);
     }
 
@@ -212,7 +212,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved String value or null if not present
      */
-    public String getString(String name) {
+    public String readString(String name) {
         return sharedPreferences.getString(name, null);
     }
 
@@ -223,7 +223,7 @@ public class Preferences implements Serializable {
      * @param defValue default value if the var is not present
      * @return Saved String value or defValue if not present
      */
-    public String getString(String name, String defValue) {
+    public String readString(String name, String defValue) {
         return sharedPreferences.getString(name, defValue);
     }
 
@@ -233,8 +233,8 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved String Set or null if not present
      */
-    public Set<String> getStringSet(String name) {
-        return getSet(STRING_SET_TYPE, name);
+    public Set<String> readStringSet(String name) {
+        return readSet(STRING_SET_TYPE, name);
     }
 
     /**
@@ -243,8 +243,8 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved Integer Set or null if not present
      */
-    public Set<Integer> getIntegerSet(String name) {
-        return getSet(INTEGER_SET_TYPE, name);
+    public Set<Integer> readIntegerSet(String name) {
+        return readSet(INTEGER_SET_TYPE, name);
     }
 
     /**
@@ -258,7 +258,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved generic Set or null if not present
      */
-    public <E> Set<E> getSet(Type type, String name) {
+    public <E> Set<E> readSet(Type type, String name) {
         String setString = sharedPreferences.getString(name, null);
         if (setString == null) {
             return null;
@@ -275,8 +275,8 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved String List or null if not present
      */
-    public List<String> getStringList(String name) {
-        return getList(STRING_LIST_TYPE, name);
+    public List<String> readStringList(String name) {
+        return readList(STRING_LIST_TYPE, name);
     }
 
     /**
@@ -285,8 +285,8 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved Integer List or null if not present
      */
-    public List<Integer> getIntegerList(String name) {
-        return getList(INTEGER_LIST_TYPE, name);
+    public List<Integer> readIntegerList(String name) {
+        return readList(INTEGER_LIST_TYPE, name);
     }
 
     /**
@@ -300,7 +300,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved generic List or null if not present
      */
-    public <E> List<E> getList(Type type, String name) {
+    public <E> List<E> readList(Type type, String name) {
         String listString = sharedPreferences.getString(name, null);
         if (listString == null) {
             return null;
@@ -317,8 +317,8 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved String Map or null if not present
      */
-    public Map<String, String> getStringMap(String name) {
-        return getMap(STRING_MAP_TYPE, name);
+    public Map<String, String> readStringMap(String name) {
+        return readMap(STRING_MAP_TYPE, name);
     }
 
     /**
@@ -327,8 +327,8 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved Integer List or null if not present
      */
-    public Map<String, Integer> getIntegerMap(String name) {
-        return getMap(INTEGER_MAP_TYPE, name);
+    public Map<String, Integer> readIntegerMap(String name) {
+        return readMap(INTEGER_MAP_TYPE, name);
     }
 
     /**
@@ -342,7 +342,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved generic Map or null if not present
      */
-    public <K, V> Map<K, V> getMap(Type type, String name) {
+    public <K, V> Map<K, V> readMap(Type type, String name) {
         String mapString = sharedPreferences.getString(name, null);
         if (mapString == null) {
             return null;
@@ -361,7 +361,7 @@ public class Preferences implements Serializable {
      * @param defValue default value if the var is not present
      * @return Saved Enum value or defValue if not present
      */
-    public <T extends Enum<T>> T getEnum(Class<T> enumType, String name, T defValue) {
+    public <T extends Enum<T>> T readEnum(Class<T> enumType, String name, T defValue) {
         String enumString = sharedPreferences.getString(name, defValue.name());
         return Enum.valueOf(enumType, enumString);
     }
@@ -373,7 +373,7 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @return Saved custom object or null if not present
      */
-    public <T> T get(Class<T> cls, String name) {
+    public <T> T read(Class<T> cls, String name) {
         String objString = sharedPreferences.getString(name, null);
         if (objString == null) {
             return null;
@@ -399,7 +399,7 @@ public class Preferences implements Serializable {
      * @return Saved custom object or null if not present
      */
     @SuppressWarnings("unchecked")
-    public <T> T get(Type type, String name) {
+    public <T> T read(Type type, String name) {
         String objString = sharedPreferences.getString(name, null);
         if (objString == null) {
             return null;
@@ -421,8 +421,8 @@ public class Preferences implements Serializable {
      * @param name name of the var
      * @param value Any primitive or object
      */
-    public void set(String name, Object value) {
-        set(Collections.singletonMap(name, value));
+    public void write(String name, Object value) {
+        write(Collections.singletonMap(name, value));
     }
 
     /**
@@ -433,7 +433,7 @@ public class Preferences implements Serializable {
      *
      * @param namesValues array of names and values
      */
-    public void set(Object... namesValues) {
+    public void write(Object... namesValues) {
         if (namesValues != null && namesValues.length > 0) {
             if (namesValues.length % 2 != 0) {
                 throw new IllegalArgumentException("namesValues must be a name/value argument list");
@@ -442,7 +442,7 @@ public class Preferences implements Serializable {
             for (int i = 0; i < namesValues.length; i += 2) {
                 map.put((String) namesValues[i], namesValues[i+1]);
             }
-            set(map);
+            write(map);
         }
     }
 
@@ -452,7 +452,7 @@ public class Preferences implements Serializable {
      *
      * @param namesValues map of names and values
      */
-    public void set(Map<String, Object> namesValues) {
+    public void write(Map<String, Object> namesValues) {
         if (namesValues != null && namesValues.size() > 0) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             for (Map.Entry<String, Object> nameValuePair : namesValues.entrySet()) {
@@ -488,11 +488,11 @@ public class Preferences implements Serializable {
      * @return Saved integer value after the increment
      */
     public int increment(String name, int defValue) {
-        int val = getInt(name, defValue);
+        int val = readInt(name, defValue);
         if (val < Integer.MAX_VALUE) {
             val++;
         }
-        set(name, val);
+        write(name, val);
         return val;
     }
 
@@ -504,11 +504,11 @@ public class Preferences implements Serializable {
      * @return Saved integer value after the decrement
      */
     public int decrement(String name, int defValue) {
-        int val = getInt(name, defValue);
+        int val = readInt(name, defValue);
         if (val > Integer.MIN_VALUE) {
             val--;
         }
-        set(name, val);
+        write(name, val);
         return val;
     }
 
@@ -517,16 +517,16 @@ public class Preferences implements Serializable {
      *
      * @param names array of vars to remove
      */
-    public void remove(String... names) {
+    public void delete(String... names) {
         for (String name : names) {
-            set(name, null);
+            write(name, null);
         }
     }
 
     /**
      * Remove all the vars.
      */
-    public void clear() {
+    public void eject() {
         sharedPreferences.edit().clear().apply();
     }
 }
