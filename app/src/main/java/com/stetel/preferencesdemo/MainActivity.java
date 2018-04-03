@@ -6,12 +6,16 @@ import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 import com.stetel.preferences.Preferences;
+import com.stetel.preferences.Versions;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,6 +27,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Preferences preferences = Preferences.getInstance(this);
+        Versions versions = preferences.checkUpdate();
+        if (versions.isUpdated()) {
+            preferences.set("updatedInfo", "updated from " + versions.getPrevious() + " to " +
+                    versions.getCurrent() + " on " +
+                    new SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.US).format(new Date()));
+        }
         // set
         preferences.set("hello", "Hello world!", "bye", "Bye world!", "times", 2);
 
@@ -49,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         Wrapper<Person> wrapper = new Wrapper<>(new Person("grandfather", 65));
         preferences.set("wrapper", wrapper);
         // get and log
+        Log.i(TAG, "Update info: " + preferences.getString("updatedInfo"));
+
         Log.i(TAG, "Greetings: " + preferences.getString("hello") + ", " +
                 preferences.getString("bye") + " x" + preferences.getInt("times", 0));
 
@@ -61,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "RGB list item: " + myString);
         }
 
-//        Person retrievedClass = preferences.get(Person.class, "myClass");
-//        Log.i(TAG, "Child name: " + retrievedClass.getName() + ", age: " +
-//                retrievedClass.getAge());
+        Person retrievedClass = preferences.get(Person.class, "child");
+        Log.i(TAG, "Child name: " + retrievedClass.getName() + ", age: " +
+                retrievedClass.getAge());
 
         // TypeToken is inside the package 'com.google.code.gson:gson'
         Type mapType = new TypeToken<Map<String, Person>>() {}.getType();

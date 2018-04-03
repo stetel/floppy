@@ -3,7 +3,6 @@ package com.stetel.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.util.Pair;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -49,6 +48,7 @@ import java.util.Set;
  * </ul>
  */
 public class Preferences implements Serializable {
+    private static final String __APP_VERSION_CODE = "__APP_VERSION_CODE";
     private static final Gson gson = new Gson();
     private static final Type STRING_SET_TYPE = new TypeToken<Set<String>>(){}.getType();
     private static final Type INTEGER_SET_TYPE = new TypeToken<Set<Integer>>(){}.getType();
@@ -58,12 +58,13 @@ public class Preferences implements Serializable {
     private static final Type INTEGER_MAP_TYPE = new TypeToken<Map<String, Integer>>(){}.getType();
     private static volatile Preferences instance;
     private SharedPreferences sharedPreferences;
+    private Versions versions;
 
     public static Preferences getInstance(Context context) {
         if (instance == null) {
             synchronized (Preferences.class) {
                 if (instance == null) {
-                    instance = new Preferences(context);
+                    instance = new Preferences(context.getApplicationContext());
                 }
             }
         }
@@ -79,17 +80,32 @@ public class Preferences implements Serializable {
         throw new CloneNotSupportedException("Preferences class is a singleton");
     }
 
-    /**
-     * Create an instance using application package name as the Shared Preferences file name
-     *
-     * @param context app context
-     */
-    private Preferences(Context context) {
+    private Preferences(Context appContext) {
         if (instance != null) {
             throw new RuntimeException("Use getInstance() to get an instance of the Preferences class");
         }
-        Context appContext = context.getApplicationContext();
         this.sharedPreferences = appContext.getSharedPreferences(appContext.getPackageName(), 0);
+        int previousVersion = getInt(__APP_VERSION_CODE, -1);
+        try {
+            int currentVersion = appContext.getPackageManager()
+                    .getPackageInfo(appContext.getPackageName(), 0).versionCode;
+            if (previousVersion != currentVersion) {
+                set(__APP_VERSION_CODE, currentVersion);
+            }
+            if (previousVersion < 0) {
+                this.versions = new Versions(currentVersion, currentVersion);
+            } else {
+                this.versions = new Versions(previousVersion, currentVersion);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            // shouldn't happen
+        }
+    }
+
+    public Versions checkUpdate() {
+        Versions tempVersions = versions.clone();
+        versions = new Versions(tempVersions.getCurrent(), tempVersions.getCurrent());
+        return tempVersions;
     }
 
     /**
