@@ -19,33 +19,9 @@ import java.util.Set;
 
 /**
  * Preferences improves the standard SharedPreferences: faster to use, lots of helpful methods,
- * save every kind of object.<br/>
+ * save every kind of object, keep tracks of app versions changes.<br/>
  * <br/>
- * Usage:
- * <ul>
- *  <li>
- *      Create a singleton class wrapping the Preferences instance
- *  </li>
- *  <li>
- *      Extend the Application class and instantiate Preferences, then add a static getter.
- *      <pre><code>
- * public class MyApplication extends Application {
- *   private Preferences preferences;
- *
- *  {@literal @}Override
- *   public void onCreate() {
- *     super.onCreate();
- *     this.preferences = new Preferences(this, BuildConfig.APPLICATION_ID);
- *   }
- *
- *   public static Preferences getPreferences(Context context) {
- *     return ((MyApplication)context.getApplicationContext()).preferences;
- *   }
- * }
- *      </code></pre>
- *  </li>
- *  <li>Generate a new instance every time you need it</li>
- * </ul>
+ * To start using it retrieve an instance via the getInstance() method.
  */
 public class Preferences implements Serializable {
     private static final String __APP_VERSION_CODE = "__APP_VERSION_CODE";
@@ -60,6 +36,12 @@ public class Preferences implements Serializable {
     private SharedPreferences sharedPreferences;
     private Versions versions;
 
+    /**
+     * Retrieve a Preferences instance.
+     *
+     * @param context Context
+     * @return An instance of this class
+     */
     public static Preferences getInstance(Context context) {
         if (instance == null) {
             synchronized (Preferences.class) {
@@ -71,15 +53,32 @@ public class Preferences implements Serializable {
         return instance;
     }
 
+    /**
+     * This method avoid the serialization of this object.
+     *
+     * @return
+     */
     protected Preferences readResolve() {
         throw new RuntimeException("Preferences class is not serializable");
     }
 
+    /**
+     * Cloning is not supported.
+     *
+     * @return Never returns
+     * @throws CloneNotSupportedException This is always thrown
+     */
     @Override
     protected Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException("Preferences class is a singleton");
     }
 
+    /**
+     * Private constructor which gets the Shared Preferences with the file name equals to the
+     * package name and save the app version info.
+     *
+     * @param appContext App context
+     */
     private Preferences(Context appContext) {
         if (instance != null) {
             throw new RuntimeException("Use getInstance() to get an instance of the Preferences class");
@@ -102,6 +101,19 @@ public class Preferences implements Serializable {
         }
     }
 
+    /**
+     * Allows to know if the app was updated since the last run.<br/>
+     * For example if you changed a var name in the new version of the app, you can use the
+     * returned value to know what was the previous app version and copy the old var.<br/>
+     * This is inspired to the SQLiteOpenHelper onUpgrade() method without the burden to specify
+     * a separated Shared Preferences version.<br/>
+     * <b>Important:</b> you will get the versions information only the first time you invoke this method.
+     *  From the second time and on, the information of the previous version is lost. It is
+     *  recommended to call this method as early as possible (e.g. extended Application class) and
+     *  proceed to update the data.
+     *
+     * @return Versions information
+     */
     public Versions checkUpdate() {
         Versions tempVersions = versions.clone();
         versions = new Versions(tempVersions.getCurrent(), tempVersions.getCurrent());
