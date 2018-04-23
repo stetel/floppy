@@ -1,12 +1,12 @@
-package com.stetel.preferencesdemo;
+package com.stetel.floppydemo;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
-import com.stetel.preferences.Floppy;
-import com.stetel.preferences.Versions;
+import com.stetel.floppy.Floppy;
+import com.stetel.floppy.Versions;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;

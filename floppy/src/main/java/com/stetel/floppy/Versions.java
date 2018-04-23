@@ -1,4 +1,4 @@
-package com.stetel.preferences;
+package com.stetel.floppy;
 
 /**
  * Versions keeps track of the previous and current app versions.

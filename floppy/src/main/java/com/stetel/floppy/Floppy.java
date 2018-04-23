@@ -1,4 +1,4 @@
-package com.stetel.preferences;
+package com.stetel.floppy;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -107,7 +107,7 @@ public class Floppy implements Serializable {
      * For example if you changed a var name in the new version of the app, you can use the
      * returned value to know what was the previous app version and copy the old var.<br/>
      * This is inspired to the SQLiteOpenHelper onUpgrade() method without the burden to specify
-     * a separated Shared Floppy version.<br/>
+     * a separated version.<br/>
      * <br/>
      * <b>Important:</b> you will get the versions information only the first time you invoke this method.
      *  From the second time and on, the information of the previous version is lost. It is
