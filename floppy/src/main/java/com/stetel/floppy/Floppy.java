@@ -325,7 +325,7 @@ public class Floppy implements Serializable {
      * Get an Integer List.
      *
      * @param name name of the var
-     * @return Saved Integer List or null if not present
+     * @return Saved Integer Map or null if not present
      */
     public Map<String, Integer> readIntegerMap(String name) {
         return readMap(INTEGER_MAP_TYPE, name);
@@ -487,7 +487,7 @@ public class Floppy implements Serializable {
      * @param defValue default value to use before the increment if the var is not present
      * @return Saved integer value after the increment
      */
-    public int increment(String name, int defValue) {
+    public int writeIncrement(String name, int defValue) {
         int val = readInt(name, defValue);
         if (val < Integer.MAX_VALUE) {
             val++;
@@ -503,7 +503,7 @@ public class Floppy implements Serializable {
      * @param defValue default value to use before the decrement if the var is not present
      * @return Saved integer value after the decrement
      */
-    public int decrement(String name, int defValue) {
+    public int writeDecrement(String name, int defValue) {
         int val = readInt(name, defValue);
         if (val > Integer.MIN_VALUE) {
             val--;
@@ -526,7 +526,7 @@ public class Floppy implements Serializable {
     /**
      * Remove all the vars.
      */
-    public void eject() {
+    public void format() {
         sharedPreferences.edit().clear().apply();
     }
 }

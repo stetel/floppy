@@ -8,7 +8,7 @@ public class Versions {
     private int current;
 
     /**
-     * Package private constructor, can only be instantiated by Preferences.
+     * Package private constructor, can only be instantiated by Floppy.
      *
      * @param previous previous version
      * @param current current version
