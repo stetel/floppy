@@ -234,7 +234,7 @@ public class Floppy implements Serializable {
      * @return Saved String Set or null if not present
      */
     public Set<String> readStringSet(String name) {
-        return readSet(STRING_SET_TYPE, name);
+        return read(STRING_SET_TYPE, name);
     }
 
     /**
@@ -244,29 +244,7 @@ public class Floppy implements Serializable {
      * @return Saved Integer Set or null if not present
      */
     public Set<Integer> readIntegerSet(String name) {
-        return readSet(INTEGER_SET_TYPE, name);
-    }
-
-    /**
-     * Get a generic Set.<br/>
-     * <br/>
-     * You must include the Google GSON library to use this method (com.google.code.gson:gson)<br/>
-     * Then create a new TypeToken, e.g.
-     * <pre><code>{@literal Type type = new TypeToken<Set<MyClass>>(){}.getType();}</pre></code>
-     *
-     * @param type generic type
-     * @param name name of the var
-     * @return Saved generic Set or null if not present
-     */
-    public <E> Set<E> readSet(Type type, String name) {
-        String setString = sharedPreferences.getString(name, null);
-        if (setString == null) {
-            return null;
-        }
-        if (setString.isEmpty()) {
-            return new HashSet<>();
-        }
-        return gson.fromJson(setString, type);
+        return read(INTEGER_SET_TYPE, name);
     }
 
     /**
@@ -276,7 +254,7 @@ public class Floppy implements Serializable {
      * @return Saved String List or null if not present
      */
     public List<String> readStringList(String name) {
-        return readList(STRING_LIST_TYPE, name);
+        return read(STRING_LIST_TYPE, name);
     }
 
     /**
@@ -286,29 +264,7 @@ public class Floppy implements Serializable {
      * @return Saved Integer List or null if not present
      */
     public List<Integer> readIntegerList(String name) {
-        return readList(INTEGER_LIST_TYPE, name);
-    }
-
-    /**
-     * Get a generic List.<br/>
-     * <br/>
-     * You must include the Google GSON library to use this method (com.google.code.gson:gson)<br/>
-     * Then create a new TypeToken, e.g.
-     * <pre><code>{@literal Type type = new TypeToken<List<MyClass>>(){}.getType();}</pre></code>
-     *
-     * @param type generic type
-     * @param name name of the var
-     * @return Saved generic List or null if not present
-     */
-    public <E> List<E> readList(Type type, String name) {
-        String listString = sharedPreferences.getString(name, null);
-        if (listString == null) {
-            return null;
-        }
-        if (listString.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return gson.fromJson(listString, type);
+        return read(INTEGER_LIST_TYPE, name);
     }
 
     /**
@@ -318,7 +274,7 @@ public class Floppy implements Serializable {
      * @return Saved String Map or null if not present
      */
     public Map<String, String> readStringMap(String name) {
-        return readMap(STRING_MAP_TYPE, name);
+        return read(STRING_MAP_TYPE, name);
     }
 
     /**
@@ -328,29 +284,7 @@ public class Floppy implements Serializable {
      * @return Saved Integer Map or null if not present
      */
     public Map<String, Integer> readIntegerMap(String name) {
-        return readMap(INTEGER_MAP_TYPE, name);
-    }
-
-    /**
-     * Get a generic Map.<br/>
-     * <br/>
-     * You must include the Google GSON library to use this method (com.google.code.gson:gson)<br/>
-     * Then create a new TypeToken, e.g.
-     * <pre><code>{@literal Type type = new TypeToken<Map<String, MyClass>>(){}.getType();}</pre></code>
-     *
-     * @param type generic type
-     * @param name name of the var
-     * @return Saved generic Map or null if not present
-     */
-    public <K, V> Map<K, V> readMap(Type type, String name) {
-        String mapString = sharedPreferences.getString(name, null);
-        if (mapString == null) {
-            return null;
-        }
-        if (mapString.isEmpty()) {
-            return new HashMap<>();
-        }
-        return gson.fromJson(mapString, type);
+        return read(INTEGER_MAP_TYPE, name);
     }
 
     /**

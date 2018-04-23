@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         // TypeToken is inside the package 'com.google.code.gson:gson'
         Type mapType = new TypeToken<Map<String, Person>>() {}.getType();
-        Map<String, Person> retrievedMap = floppy.readMap(mapType, "parentsMap");
+        Map<String, Person> retrievedMap = floppy.read(mapType, "parentsMap");
         for (Map.Entry<String, Person> entry: retrievedMap.entrySet()){
             Log.i(TAG, entry.getKey() + " name: " +
                     entry.getValue().getName() + ", age: " + entry.getValue().getAge());
