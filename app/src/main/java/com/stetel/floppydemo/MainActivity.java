@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.google.gson.reflect.TypeToken;
 import com.stetel.floppy.Floppy;
-import com.stetel.floppy.Versions;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
@@ -27,12 +26,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Floppy floppy = Floppy.insert(this);
-        Versions versions = floppy.checkUpdate();
-        if (versions.isUpdated()) {
-            floppy.write("updatedInfo", "updated from " + versions.getPrevious() + " to " +
-                    versions.getCurrent() + " on " +
-                    new SimpleDateFormat("MM-dd HH:mm:ss.SSS", Locale.US).format(new Date()));
-        }
         // set
         floppy.write("hello", "Hello world!", "bye", "Bye world!", "times", 2);
 
@@ -59,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         Wrapper<Person> wrapper = new Wrapper<>(new Person("grandfather", 65));
         floppy.write("wrapper", wrapper);
         // get and log
+        Log.i(TAG, "onUpgrade setup: " + floppy.readString("setup"));
+
         Log.i(TAG, "Update info: " + floppy.readString("updatedInfo"));
 
         Log.i(TAG, "Greetings: " + floppy.readString("hello") + ", " +

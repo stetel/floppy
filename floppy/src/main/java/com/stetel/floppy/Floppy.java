@@ -2,17 +2,14 @@ package com.stetel.floppy;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +21,7 @@ import java.util.Set;
  * To start using it retrieve an instance via the insert() method.
  */
 public class Floppy implements Serializable {
-    private static final String __APP_VERSION_CODE = "__APP_VERSION_CODE";
+    private static final String __FLOPPY_DRIVE_VERSION_ = "__FLOPPY_DRIVE_VERSION_";
     private static final Gson gson = new Gson();
     private static final Type STRING_SET_TYPE = new TypeToken<Set<String>>(){}.getType();
     private static final Type INTEGER_SET_TYPE = new TypeToken<Set<Integer>>(){}.getType();
@@ -34,7 +31,31 @@ public class Floppy implements Serializable {
     private static final Type INTEGER_MAP_TYPE = new TypeToken<Map<String, Integer>>(){}.getType();
     private static volatile Floppy instance;
     private SharedPreferences sharedPreferences;
-    private Versions versions;
+
+    /**
+     * Use this method to define the current version of your SharedPreference's variables (alias Floppy Drive)<br/>
+     * You should change this number every time you make some big changes to the structure of your variables.<br/>
+     * This is inspired to the SQLiteOpenHelper onUpgrade() method.<br/>
+     * <br/>
+     * E.g.: You start implementing Floppy and define the version as 1, then you save a var called "setup" with the value _true_.
+     * You decide to add new setup steps, so you want to change the setup var to contain strings instead of booleans.
+     * So you change to version 2 where the old `setup = true` corresponds to `setup = "account"` and `setup = false` to `setup = "none"`.<br/>
+     * <br/>
+     * <b>Important:</b> this method will set the new version and call the Loader.onUpgrade() if the version is different from the previous one.
+     *  From the second time and on, the information of the previous version is lost because it was overwritten by the first invocation of the method.
+     *
+     * @param context Context
+     * @param version Current version
+     * @param loader Interface which is called if and only if the previous version is different to the current one
+     */
+    public static void driveUpgrade(Context context, int version, Loader loader) {
+        Floppy floppy = Floppy.insert(context);
+        int previousVersion = floppy.readInt(__FLOPPY_DRIVE_VERSION_, -1);
+        if (previousVersion != version) {
+            floppy.write(__FLOPPY_DRIVE_VERSION_, version);
+        }
+        loader.onUpgrade(floppy, previousVersion, version);
+    }
 
     /**
      * Retrieve a Floppy instance.
@@ -84,42 +105,6 @@ public class Floppy implements Serializable {
             throw new RuntimeException("Use insert() to get an instance of the Floppy class");
         }
         this.sharedPreferences = appContext.getSharedPreferences(appContext.getPackageName(), 0);
-        int previousVersion = readInt(__APP_VERSION_CODE, -1);
-        try {
-            int currentVersion = appContext.getPackageManager()
-                    .getPackageInfo(appContext.getPackageName(), 0).versionCode;
-            if (previousVersion != currentVersion) {
-                write(__APP_VERSION_CODE, currentVersion);
-            }
-            if (previousVersion < 0) {
-                this.versions = new Versions(currentVersion, currentVersion);
-            } else {
-                this.versions = new Versions(previousVersion, currentVersion);
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            // shouldn't happen
-        }
-    }
-
-    /**
-     * Allows to know if the app was updated since the last run.<br/>
-     * <br/>
-     * For example if you changed a var name in the new version of the app, you can use the
-     * returned value to know what was the previous app version and copy the old var.<br/>
-     * This is inspired to the SQLiteOpenHelper onUpgrade() method without the burden to specify
-     * a separated version.<br/>
-     * <br/>
-     * <b>Important:</b> you will get the versions information only the first time you invoke this method.
-     *  From the second time and on, the information of the previous version is lost. It is
-     *  recommended to call this method as early as possible (e.g. extended Application class) and
-     *  proceed to update the data.
-     *
-     * @return Versions information
-     */
-    public Versions checkUpdate() {
-        Versions tempVersions = versions.clone();
-        versions = new Versions(tempVersions.getCurrent(), tempVersions.getCurrent());
-        return tempVersions;
     }
 
     /**
@@ -461,6 +446,8 @@ public class Floppy implements Serializable {
      * Remove all the vars.
      */
     public void format() {
+        int version = readInt(__FLOPPY_DRIVE_VERSION_, -1);
         sharedPreferences.edit().clear().apply();
+        write(__FLOPPY_DRIVE_VERSION_, version);
     }
 }
