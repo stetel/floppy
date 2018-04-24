@@ -30,3 +30,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.code.gson:gson:2.8.2'
 }
+
+apply from: 'stetel-publish.gradle'
