@@ -54,7 +54,9 @@ public class Floppy implements Serializable {
         if (previousVersion != version) {
             floppy.write(__FLOPPY_DRIVE_VERSION_, version);
         }
-        loader.onUpgrade(floppy, previousVersion, version);
+        if (previousVersion >= 0) {
+            loader.onUpgrade(floppy, previousVersion, version);
+        }
     }
 
     /**
