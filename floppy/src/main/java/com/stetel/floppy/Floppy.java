@@ -371,8 +371,12 @@ public class Floppy implements Serializable {
     /**
      * Set a var containing any value<br/>
      * <br/>
-     * <i>Note: Objects representing primitives are converted to primitive for better efficiency.
-     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</i>
+     * <i>Notes:
+     * <ul>
+     *   <li>Passing null as a value, will remove the var</li>
+     *   <li>Boolean, Integer, Float and Long objects are converted to primitive for better efficiency.
+     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</li>
+     * </ul></i>
      *
      * @param name name of the var
      * @param value Any primitive or object
@@ -387,8 +391,12 @@ public class Floppy implements Serializable {
      * can be any object.<br/>
      * Using this method is more efficient in case you need to save multiple vars.<br/>
      * <br/>
-     * <i>Note: Objects representing primitives are converted to primitive for better efficiency.
-     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</i>
+     * <i>Notes:
+     * <ul>
+     *   <li>Passing null as a value, will remove the var</li>
+     *   <li>Boolean, Integer, Float and Long objects are converted to primitive for better efficiency.
+     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</li>
+     * </ul></i>
      *
      * @param namesValues array of names and values
      */
@@ -409,8 +417,12 @@ public class Floppy implements Serializable {
      * Set multiple vars containing any value.<br/>
      * Using this method is more efficient in case you need to save multiple vars.<br/>
      * <br/>
-     * <i>Note: Objects representing primitives are converted to primitive for better efficiency.
-     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</i>
+     * <i>Notes:
+     * <ul>
+     *   <li>Passing null as a value, will remove the var</li>
+     *   <li>Boolean, Integer, Float and Long objects are converted to primitive for better efficiency.
+     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</li>
+     * </ul></i>
      *
      * @param namesValues map of names and values
      */
