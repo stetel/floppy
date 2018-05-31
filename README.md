@@ -138,3 +138,14 @@ It is recommended to use _cascading if statements_ based on _previousVersion_ to
 
 Important: this method will set the new version and call the Loader.onUpgrade() if the version is different from the previous one.
 From the second time and on, the information of the previous version is lost because it was overwritten by the first invocation of the method.
+
+# History
+
+### 1.1.0 
+- Added method to check if a var exists
+- Added better exception explanation due to using a read() method with an incorrect type
+- Changed: Improved javadocs, explaining some behavior of the write() methods
+- Fixed: driveUpgrade listener is not called anymore if it is the first time starting the app
+
+### 1.0.0 
+- First release

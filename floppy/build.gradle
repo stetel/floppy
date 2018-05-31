@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 ext {
     versionMajor = 1
-    versionMinor = 0
+    versionMinor = 1
     versionPatch = 0
 }
 android {
