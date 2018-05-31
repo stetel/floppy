@@ -116,7 +116,7 @@ public class Floppy implements Serializable {
      * @return Saved boolean value or false if not present
      */
     public boolean readBoolean(String name) {
-        return sharedPreferences.getBoolean(name, false);
+        return readBoolean(name, false);
     }
 
     /**
@@ -127,7 +127,11 @@ public class Floppy implements Serializable {
      * @return Saved boolean value or defValue if not present
      */
     public boolean readBoolean(String name, boolean defValue) {
-        return sharedPreferences.getBoolean(name, defValue);
+        try {
+            return sharedPreferences.getBoolean(name, defValue);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not 'boolean'");
+        }
     }
 
     /**
@@ -137,7 +141,7 @@ public class Floppy implements Serializable {
      * @return Saved integer value or 0 if not present
      */
     public int readInt(String name) {
-        return sharedPreferences.getInt(name, 0);
+        return readInt(name, 0);
     }
 
     /**
@@ -148,7 +152,11 @@ public class Floppy implements Serializable {
      * @return Saved integer value or defValue if not present
      */
     public int readInt(String name, int defValue) {
-        return sharedPreferences.getInt(name, defValue);
+        try {
+            return sharedPreferences.getInt(name, defValue);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not 'int'");
+        }
     }
 
     /**
@@ -158,7 +166,7 @@ public class Floppy implements Serializable {
      * @return Saved boolean value or 0 if not present
      */
     public float readFloat(String name) {
-        return sharedPreferences.getFloat(name, 0);
+        return readFloat(name, 0);
     }
 
     /**
@@ -169,7 +177,11 @@ public class Floppy implements Serializable {
      * @return Saved float value or defValue if not present
      */
     public float readFloat(String name, float defValue) {
-        return sharedPreferences.getFloat(name, defValue);
+        try {
+            return sharedPreferences.getFloat(name, defValue);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not 'float'");
+        }
     }
 
     /**
@@ -179,7 +191,7 @@ public class Floppy implements Serializable {
      * @return Saved long value or 0 if not present
      */
     public long readLong(String name) {
-        return sharedPreferences.getLong(name, 0);
+        return readLong(name, 0);
     }
 
     /**
@@ -190,7 +202,11 @@ public class Floppy implements Serializable {
      * @return Saved long value or defValue if not present
      */
     public long readLong(String name, long defValue) {
-        return sharedPreferences.getLong(name, defValue);
+        try {
+            return sharedPreferences.getLong(name, defValue);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not 'long'");
+        }
     }
 
     /**
@@ -200,7 +216,7 @@ public class Floppy implements Serializable {
      * @return Saved String value or null if not present
      */
     public String readString(String name) {
-        return sharedPreferences.getString(name, null);
+        return readString(name, null);
     }
 
     /**
@@ -211,7 +227,11 @@ public class Floppy implements Serializable {
      * @return Saved String value or defValue if not present
      */
     public String readString(String name, String defValue) {
-        return sharedPreferences.getString(name, defValue);
+        try {
+            return sharedPreferences.getString(name, defValue);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not 'String'");
+        }
     }
 
     /**
@@ -283,8 +303,12 @@ public class Floppy implements Serializable {
      * @return Saved Enum value or defValue if not present
      */
     public <T extends Enum<T>> T readEnum(Class<T> enumType, String name, T defValue) {
-        String enumString = sharedPreferences.getString(name, defValue.name());
-        return Enum.valueOf(enumType, enumString);
+        try {
+            String enumString = sharedPreferences.getString(name, defValue.name());
+            return Enum.valueOf(enumType, enumString);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not " + enumType.toString());
+        }
     }
 
     /**
@@ -295,18 +319,22 @@ public class Floppy implements Serializable {
      * @return Saved custom object or null if not present
      */
     public <T> T read(Class<T> cls, String name) {
-        String objString = sharedPreferences.getString(name, null);
-        if (objString == null) {
-            return null;
-        }
-        if (objString.isEmpty()) {
-            try {
-                return cls.newInstance();
-            } catch (Exception e) {
+        try {
+            String objString = sharedPreferences.getString(name, null);
+            if (objString == null) {
                 return null;
             }
+            if (objString.isEmpty()) {
+                try {
+                    return cls.newInstance();
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+            return gson.fromJson(objString, cls);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not '" + cls.toString() + "'");
         }
-        return gson.fromJson(objString, cls);
     }
 
     /**
@@ -321,19 +349,23 @@ public class Floppy implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public <T> T read(Type type, String name) {
-        String objString = sharedPreferences.getString(name, null);
-        if (objString == null) {
-            return null;
-        }
-        if (objString.isEmpty()) {
-            try {
-                TypeToken<T> typeToken = (TypeToken<T>) TypeToken.get(type);
-                return (T) typeToken.getRawType().newInstance();
-            } catch (Exception e) {
+        try {
+            String objString = sharedPreferences.getString(name, null);
+            if (objString == null) {
                 return null;
             }
+            if (objString.isEmpty()) {
+                try {
+                    TypeToken<T> typeToken = (TypeToken<T>) TypeToken.get(type);
+                    return (T) typeToken.getRawType().newInstance();
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+            return gson.fromJson(objString, type);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("The type of the requested var is not '" + type.toString() + "'");
         }
-        return gson.fromJson(objString, type);
     }
 
     /**
