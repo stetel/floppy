@@ -90,6 +90,12 @@ List<Person> retrievedPeopleList = floppy.read(peopleListType, "people");
 ```
 Add the dependency for TypeToken which is inside the package _'com.google.code.gson:gson'_.
 
+**Check vars**
+```
+boolean exists = floppy.contains("var");
+boolean bothExists = floppy.contains("var1", "var2"); // all the vars must exists
+```
+
 **Delete vars**
 ```
 floppy.delete("var"); // single
