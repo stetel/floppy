@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i(TAG, "Contains hello: " + floppy.contains("hello"));
         Log.i(TAG, "Contains seeya: " + floppy.contains("seeya"));
+        Log.i(TAG, "Contains both hello & seeya: " + floppy.contains("hello", "seeya"));
 
         Log.i(TAG, "Greetings: " + floppy.readString("hello") + ", " +
                 floppy.readString("bye") + " x" + floppy.readInt("times", 0));
