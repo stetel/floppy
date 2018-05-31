@@ -369,7 +369,10 @@ public class Floppy implements Serializable {
     }
 
     /**
-     * Set a var containing any value
+     * Set a var containing any value<br/>
+     * <br/>
+     * <i>Note: Objects representing primitives are converted to primitive for better efficiency.
+     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</i>
      *
      * @param name name of the var
      * @param value Any primitive or object
@@ -382,7 +385,10 @@ public class Floppy implements Serializable {
      * Set multiple vars containing any value.<br/>
      * The arguments must be passed in name/value pairs where the name is always a String and value
      * can be any object.<br/>
-     * Using this method is more efficient in case you need to save multiple vars.
+     * Using this method is more efficient in case you need to save multiple vars.<br/>
+     * <br/>
+     * <i>Note: Objects representing primitives are converted to primitive for better efficiency.
+     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</i>
      *
      * @param namesValues array of names and values
      */
@@ -401,7 +407,10 @@ public class Floppy implements Serializable {
 
     /**
      * Set multiple vars containing any value.<br/>
-     * Using this method is more efficient in case you need to save multiple vars.
+     * Using this method is more efficient in case you need to save multiple vars.<br/>
+     * <br/>
+     * <i>Note: Objects representing primitives are converted to primitive for better efficiency.
+     * Saving an Integer require to use readInt(...) and not read(Integer.class,...)</i>
      *
      * @param namesValues map of names and values
      */
