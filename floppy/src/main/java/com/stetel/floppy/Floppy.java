@@ -110,6 +110,19 @@ public class Floppy implements Serializable {
     }
 
     /**
+     * Check if a var exists.<br/>
+     * <br/>
+     * <i>Note: This method will return true in case you wrote a null value inside a var.
+     * Check out the write() methods</i>
+     *
+     * @param name name of the var
+     * @return true if the var is present in the Shared Preferences
+     */
+    public boolean contains(String name) {
+        return sharedPreferences.contains(name);
+    }
+
+    /**
      * Get a boolean value.
      *
      * @param name name of the var
