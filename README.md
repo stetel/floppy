@@ -6,12 +6,11 @@ Insert the disk to read and write data.
 Note: Floppy is not thread safe to ensure maximum performances. You should take care of synchronization only when you read/write the same var from different threads.
 
 # Importing
-The library can be imported by adding a dependency in the Gradle build file.
+The library is public and can be imported by adding a dependency in the Gradle build file.
 ```
-implementation 'com.stetel:floppy:1.0.0'
+implementation 'com.stetel:floppy:1.1.0'
 ```
-Please check what is the latest version.
-See [Stetel Maven repository website](https://maven.stetel.com/help.jsp) for more information.
+Please check which is the latest version before adding the line to your Gradle file.
 
 # Usage
 **Retrieve an instance of Floppy**
@@ -138,6 +137,16 @@ It is recommended to use _cascading if statements_ based on _previousVersion_ to
 
 Important: this method will set the new version and call the Loader.onUpgrade() if the version is different from the previous one.
 From the second time and on, the information of the previous version is lost because it was overwritten by the first invocation of the method.
+
+# Proguard
+Floppy uses Gooogle GSON lib to handle object saving, thus needs to add the rules for excluding certain classes from Proguards.
+These rules are added automatically when you import Floppy via Gradle, so you don't have to worry about it.
+
+# Authors
+- Lorenzo Lombardo - _Stetel Srl_ - www.stetel.com
+
+# License
+Printer is available under the [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 # History
 
