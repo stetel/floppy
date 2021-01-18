@@ -139,7 +139,7 @@ Important: this method will set the new version and call the Loader.onUpgrade() 
 From the second time and on, the information of the previous version is lost because it was overwritten by the first invocation of the method.
 
 # Proguard
-Floppy uses Gooogle GSON lib to handle object saving, thus needs to add the rules for excluding certain classes from Proguards.
+Floppy uses Google GSON lib to handle object saving, thus needs to add the rules for excluding certain classes from Proguards.
 These rules are added automatically when you import Floppy via Gradle, so you don't have to worry about it.
 
 # Authors
