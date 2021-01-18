@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Floppy.iml" filepath="$PROJECT_DIR$/Floppy.iml" group="Floppy" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Floppy/app" />
+      <module fileurl="file://$PROJECT_DIR$/floppy/floppy.iml" filepath="$PROJECT_DIR$/floppy/floppy.iml" group="Floppy/floppy" />
+    </modules>
+  </component>
+</project>
