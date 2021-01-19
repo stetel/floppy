@@ -4,7 +4,27 @@ ext {
     versionMajor = 1
     versionMinor = 1
     versionPatch = 0
+
+    groupId = 'com.stetel'
+    artifactId = 'floppy'
+    name = 'Floppy'
+    description = 'An Android lib which improves the standard SharedPreferences'
+    url = 'https://github.com/stetel/floppy'
+    scmUrl = 'https://github.com/stetel/floppy.git'
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    inceptionYear = 2018
+
+    developers = new ArrayList<>()
+    kazikalDev = new HashMap<>()
+    kazikalDev.put('id', 'kazikal')
+    kazikalDev.put('name', 'Lorenzo Lombardo')
+    kazikalDev.put('email', 'l.lombardo@stetel.com')
+    kazikalDev.put('organization', 'Stetel Srl')
+    kazikalDev.put('organizationUrl', 'http://www.stetel.com')
+    developers.add(kazikalDev)
 }
+
 android {
     compileSdkVersion 26
 
@@ -31,4 +51,4 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 }
 
-apply from: 'stetel-publish.gradle'
+apply from: 'bintray-publish.gradle'
