@@ -6,11 +6,20 @@ Insert the disk to read and write data.
 Note: Floppy is not thread safe to ensure maximum performances. You should take care of synchronization only when you read/write the same var from different threads.
 
 # Importing
-The library is public and can be imported by adding a dependency in the Gradle build file.
+The library is available at MavenCentral  and can be imported by adding a dependency in the Gradle build file.
 ```
 implementation 'com.stetel:floppy:1.1.0'
 ```
-Please check which is the latest version before adding the line to your Gradle file.
+
+Check if you have the correct repositories in the root (not app) gradle file.
+``` 
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+``` 
 
 # Usage
 **Retrieve an instance of Floppy**

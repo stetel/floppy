@@ -10,10 +10,11 @@ ext {
     name = 'Floppy'
     description = 'An Android lib which improves the standard SharedPreferences'
     url = 'https://github.com/stetel/floppy'
+    scmConnection = 'scm:git:github.com/stetel/floppy.git'
     scmUrl = 'https://github.com/stetel/floppy.git'
     licenseName = 'The Apache Software License, Version 2.0'
     licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    inceptionYear = 2018
+    inceptionYear = '2018'
 
     developers = new ArrayList<>()
     kazikalDev = new HashMap<>()
@@ -51,4 +52,4 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 }
 
-apply from: 'bintray-publish.gradle'
+apply from: 'publish-mavencentral.gradle'
